@@ -3,7 +3,7 @@
 //
 // All source code is released under the terms of the MIT License.
 // See LICENSE for more information.
-// Contributions from: 
+// Contributions from:
 // Eric Pak, Levi Oyster, Boyd Ching, Rowan Bulkow, Neal Logan, Mackenzie Bartlett
 //
 //package threejsFileGen;
@@ -15,18 +15,24 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//**
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+//**
+
 public class GexfReader {
 
 	public Layer createLayer(Path filePath, int fileCounter) {
 		Layer layer;
 		System.out.println("path: "+filePath.toString());
-		
+
 		String date = findDate(filePath.toString());
 		System.out.println("date: "+date);
-		
+
 		int intDate = convertDateToInt(0, date);
 		System.out.println("Z: "+intDate);
-		
+
 		layer = readFile(filePath.toString(), intDate, fileCounter);
 		return layer;
 	}
@@ -52,11 +58,11 @@ public class GexfReader {
 		}
 		return tempLayer;
 	}
-	
+
 	private Layer loadNodes(Layer tempLayer, Scanner file, int fileCounter) throws IOException{
 		String token = "";
 		Node tempNode = new Node();
-		
+
         do{
 			token = file.next();
 			if (token.startsWith("id=")){
@@ -83,7 +89,7 @@ public class GexfReader {
 			else if (token.startsWith("y=")){
 				tempNode.setY(Double.parseDouble(token.substring(3, findSecondQuote(3, token))));
 			}
-			
+
 			else if (token.equalsIgnoreCase("<viz:color")){
 				int r, g, b;
 				token = file.next();
@@ -115,7 +121,7 @@ public class GexfReader {
 
 		do{
 			token = file.next();
-			
+
 			if(token.startsWith("source=")){
 				edge.setSource(token.substring(8, findSecondQuote(8,token)));
 			}
@@ -140,6 +146,82 @@ public class GexfReader {
 		}while (!token.endsWith("</edge>"));
 		return edge;
 	}
+
+	/*
+	private Layer loadNodes(Layer tempLayer, Scanner file, int fileCounter) throws IOException{
+		String token = "";
+		Node tempNode = new Node();
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    Document doc = dBuilder.parse(inputFile);
+		doc.getDocumentElement().normalize();
+
+		NodeList nodeList = doc.getChildNodes();
+
+		for(int temp=0; temp < nodeList.getLength(); temp++){
+			Node nNode = nList.item(temp);
+      if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) nNode;
+				tempNode.setId(element.getAttribute("id").getNodeValue());
+				tempNode.setLabel(element.getAttribute("label").getNodeValue());
+				tempNode.setModClass(fileCounter + (Int)element.getElementsByTagName("attvalues").item(3).getTextContent()); //check
+				tempNode.setSize((Double) element.getElementsByTagName("viz:size").getAttribute("value").getNodeValue();
+				tempNode.setZ(convertDateToInt(0,element.getAttribute("start").getNodeValue())); //check
+				tempNode.setX(element.getElementsByTagName("viz:position").getAttribute("x").getNodeValue());
+				tempNode.setY(element.getElementsByTagName("viz:position").getAttribute("y").getNodeValue());
+				int r, g, b;
+				//token = file.next(); //fix the color part, this is just the old version
+				r = element.getElementsByTagName("viz:color").getAttribute("r").getNodeValue();
+				//token = file.next();
+				g = element.getElementsByTagName("viz:color").getAttribute("g").getNodeValue();
+				//token = file.next();
+				b = element.getElementsByTagName("viz:color").getAttribute("b").getNodeValue();
+				tempNode.setColor(new NodeColor(String.format("#%02X%02X%02X", r, g, b)));
+			}
+		}
+		if(tempNode.getZ() == 0){
+			tempNode.setZ(tempLayer.getDate());
+		}
+		if(tempLayer.checkModClassExist(tempNode.getModClass())){
+			tempLayer.getCommunity(tempNode.getModClass()).addNode(tempNode);
+		}
+		else{
+			tempLayer.addCommunity(new Community(tempNode.getModClass()), tempNode.getModClass());
+			tempLayer.getCommunity(tempNode.getModClass()).addNode(tempNode);
+			tempLayer.getCommunity(tempNode.getModClass()).setColor(tempNode.getColor());
+		}
+		return tempLayer;
+	}
+
+	private Edge loadEdge(Scanner file) throws IOException{
+		String token = "";
+		Edge edge = new Edge();
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+    Document doc = dBuilder.parse(inputFile);
+		doc.getDocumentElement().normalize();
+
+		for(int temp=0; temp < nodeList.getLength(); temp++){
+			Node nNode = nList.item(temp);
+      if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) nNode;
+				edge.setSource(element.getAttributes().getNamedItem("source").getNodeValue());
+				edge.setTarget(element.getAttributes().getNamedItem("target").getNodeValue());
+				edge.setWeight(element.getElementsByTagName("attvalues").item(0).getChildNodes()
+											.item(0).getAttributes().getNamedItem("value").getNodeValue())
+				edge.setWeight(Double.parseDouble(token.substring(7, findSecondQuote(7,token)))); //fix
+				edge.setStart(convertDateToInt(7, element.getAttributes().getNamedItem("start").getNodeValue()));
+				if(element.hasAttribute("endopen"))//returns true if has endopen
+					edge.setEnd(convertDateToInt(9, element.getAttributes().getNamedItem("start").getNodeValue()));
+				else
+					edge.setEnd(convertDateToInt(7, element.getAttributes().getNamedItem("start").getNodeValue()));
+			}
+	  }
+		return edge;
+	}
+*/
 
 	// Finds the second double quote
 	private int findSecondQuote(int i, String s){

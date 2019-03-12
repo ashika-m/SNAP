@@ -278,7 +278,7 @@ function loadLayers() {
                             layer.nodeLabels = [];
                             layer.clusterLabels = [];
                             //layer.z = parseFloat( line[2] )*100*zMult; -- "layer,0,736289,0.0" index, date, layerz
-                            layer.z = parseFloat( line[1] )*100*zMult; 
+                            layer.z = parseFloat( line[1] )*100*zMult;
                             layer.r = 0; // used to indicate what state the layer is in - are labels loaded, etc
                             layer.geometry = new THREE.Geometry();
                             layer.mesh = null;
@@ -305,7 +305,7 @@ function loadLayers() {
                             var cluster = {};
                             //cluster: index, community, dominant concept, weighted center X, weighted ceneterY, color index
                             //cluster,5,5,lance,0.3176634431919697,139.84600862406305,165
-                            //console.log("Cluster: " + line); 
+                            //console.log("Cluster: " + line);
                             cluster.index = parseInt( line[1] );
                             cluster.name = line[3];
                             cluster.x = parseFloat( line[4] );  //used to be 3
@@ -348,7 +348,7 @@ function loadLayers() {
                             //     36,agents,20.0,685.51666,2364.8718
                             var node = {};
                             //19,gush,20.02694,1755.7834,-2462.2236
-                            //id, concept, size, x, y 
+                            //id, concept, size, x, y
                             //console.log("Node "+ line);
                             node.index = parseInt( line[0] );
                             node.name = line[1];
@@ -443,11 +443,11 @@ function loadEdges() {
                         //console.log("Edge: "+line);
                         if (layerIndex > layers.length-1){
                             console.log("LoadingEdges: Bad layerIndex: "+layerIndex);
-                        }else{ 
+                        }else{
                             //var startNode = layers[layerIndex].nodes[parseInt( line[0] )];
                             //var endNode = layers[layerIndex].nodes[parseInt( line[2] )];
                             var startVector = new THREE.Vector3( line[0], line[1], layers[layerIndex].z );
-                            var endVector = new THREE.Vector3( line[4], line[5], layers[layerIndex].z );   
+                            var endVector = new THREE.Vector3( line[4], line[5], layers[layerIndex].z );
                             edgeGeom.vertices.push( startVector, endVector );
                         }
                     }
