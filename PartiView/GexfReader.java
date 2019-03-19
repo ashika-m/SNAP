@@ -59,6 +59,7 @@ public class GexfReader {
 		return tempLayer;
 	}
 
+/*
 	private Layer loadNodes(Layer tempLayer, Scanner file, int fileCounter) throws IOException{
 		String token = "";
 		Node tempNode = new Node();
@@ -146,8 +147,9 @@ public class GexfReader {
 		}while (!token.endsWith("</edge>"));
 		return edge;
 	}
+	*/
 
-	/*
+
 	private Layer loadNodes(Layer tempLayer, Scanner file, int fileCounter) throws IOException{
 		String token = "";
 		Node tempNode = new Node();
@@ -221,7 +223,6 @@ public class GexfReader {
 	  }
 		return edge;
 	}
-*/
 
 	// Finds the second double quote
 	private int findSecondQuote(int i, String s){
